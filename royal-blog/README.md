@@ -1,6 +1,7 @@
 # royal-blog
 
 > A Vue.js project
+一个基于VUE2.0+elementUI搭建的技术分享博客
 
 ## Build Setup
 
