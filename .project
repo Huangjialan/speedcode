@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>speedcode</name>
+	<name>royal-blog</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,7 +16,25 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1532675966952</id>
+			<id>1531273671080</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-node_modules</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1532676300137</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-node_modules</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1532678250076</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
