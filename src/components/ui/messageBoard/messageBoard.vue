@@ -1,10 +1,8 @@
 <template>
   <div id="messageBoard" class="container messageBoard-box border-r" @click="clickEvent">
     <div class="leave">
-      <!--<el-input type="textarea" :rows="5" resize="none" placeholder="请输入想您说的话..." v-model="msgcontent" />-->
-      <!--</el-input>-->
       <!--DIV输入框-->
-      <div class="editor" v-html="msgcontent" @keyup="setContent($event)" contenteditable></div>
+      <div class="editor" v-html="msgcontent" @keyup="setContent($event)" contenteditable="true" v-if="showEdit"></div>
       <span class="pcl" v-show="pclShow">{{pcl}}</span>
       <div class="tools">
         <i @click="setB" class="iconfont">&#xe6fe;</i>
@@ -28,13 +26,13 @@
           <div class="fl content">
             <h4><a :href="vo.url" target="_blank">{{vo.name}}</a></h4>
             <p v-html="vo.content"></p>
-            <span>{{vo.time|timeReturn}}<a class="fr" @click="replyBtn(vo.id,vo.name)" href="#messageBoard">回复</a></span>
+            <span>{{vo.time|timeReturn}}<a class="fr" @click="replyBtn(vo.id,vo.name)">回复</a></span>
             <div class="reply" v-for="zo in vo.list">
               <a :href="zo.url" target="_blank"><img src="static/img/head.jpg" /></a>
               <h4><a :href="zo.url" target="_blank">{{zo.name}}</a> 回复: <a :href="vo.url" target="_blank">{{vo.name}}</a></h4>
               <p v-html="zo.content"></p>
               <span>{{zo.time | timeReturn}}
-                <a class="fr" @click="replyBtn(zo.id,zo.name)" href="#messageBoard">回复</a>
+                <a class="fr" @click="replyBtn(zo.id,zo.name)">回复</a>
               </span>
               <div class="reply" v-for="zzo in zo.list">
                 <a :href="zzo.url" target="_blank"><img src="static/img/head.jpg" /></a>
@@ -105,6 +103,7 @@
         messageList: [],
         currentPage: 1,
         dialogTableVisible: false,
+        showEdit:true,
         text:1
       }
     },
@@ -121,7 +120,6 @@
         this.init();
       }
     },
-    
     methods: {
       init () {
         this.form = JSON.parse(localStorage.getItem('userInfo')) || this.form;
@@ -191,11 +189,7 @@
       },
       //表情
       inpFACE: function(i) {
-        console.log(1,this.msgcontent);
-        this.msgcontent = this.content2 = "23";
-        console.log(2,this.msgcontent);
-        
-//      this.msgcontent = this.content2 = this.content2 + "<img src='./static/img/qqbq/" + i + ".gif'>";
+        this.msgcontent = this.content2 = this.content2 + "<img src='./static/img/qqbq/" + i + ".gif'>";
       },
       //引用
       setREFER: function() {
@@ -245,12 +239,20 @@
         this.pid=id;
         this.pcl='回复'+(name || '匿名')+':';
         this.pclShow = true;
-        this.msgcontent = this.content2 = "asd";
+        this.clearInfo();
+        document.querySelector("#messageBoard").scrollIntoView(true);
+      },
+      clearInfo (){
+        //清除留言板内容
+        this.showEdit = false;
+        this.$nextTick(() => {
+          this.showEdit=true;          
+        });
+        this.msgcontent = this.content2 = " ";
       },
       //弹出用户信息框
       showInfo (){
-        this.msgcontent = this.content2 = " 2";
-        return;
+//      this.msgcontent = this.content2 = " ";
         var self = this;
         if(this.content2.length < 8) {
           this.$message.error('留言内容不得少于8个字');
@@ -281,13 +283,11 @@
         };
         this.$axios.post('http://47.104.73.125:81/api/leave/add.html',params).then((res)=>{
           if(res.data.code == 1) {
-            self.msgcontent = self.content2 = " ";
+            this.clearInfo();
             self.pid = 0;
             self.$message.success("留言成功");
             this.dialogTableVisible = false;
-            console.log("content1",self.msgcontent+self.content2);
             self.init();
-            console.log("content2",self.msgcontent+self.content2);
           } else {
             self.$message.error(e.data.msg);
             this.dialogTableVisible = false;

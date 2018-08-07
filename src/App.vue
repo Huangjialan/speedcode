@@ -9,6 +9,10 @@
     </div>
     <div class="blackPage"></div>
     <GotoTop/>
+    <!--点击特效-->
+    <div class="floatig">
+      <font v-for="vo in keys.list" v-show="vo.show" :style="{top:vo.yy+'px',left:vo.xx+'px',opacity:vo.opacity,color:keys.color}">{{vo.name}}</font>
+    </div>
   </div>
 </template>
 
@@ -22,14 +26,15 @@
       return {
         keys:{
           list:[
-            {name:"php",show:false,yy:0,xx:0,opacity:1},
-            {name:"css",show:false,yy:0,xx:0,opacity:1},
-            {name:"python",show:false,yy:0,xx:0,opacity:1},
-            {name:"java",show:false,yy:0,xx:0,opacity:1},
-            {name:"mysql",show:false,yy:0,xx:0,opacity:1},
-            {name:"php",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚龙",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚蒙",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚泳",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚2冬",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚森",show:false,yy:0,xx:0,opacity:1},
+            {name:"I'm 骚康",show:false,yy:0,xx:0,opacity:1},
           ],
-          i:0
+          i:0,
+          color:""
         },
       }
     },
@@ -51,6 +56,7 @@
         self.keys.list[n].xx = e.clientX;
         self.keys.list[n].show = true;
         self.keys.list[n].opacity = 1;
+        this.color();
         setTimeout(function(){
           self.keys.list[n].opacity = 0.1;
           self.keys.list[n].yy = e.clientY-50;
@@ -61,6 +67,16 @@
         },1000)
 
         self.keys.i = (self.keys.i==self.keys.list.length-1) ? 0 : ++self.keys.i;
+      },
+      color(){
+        let colorAngle = Math.floor(Math.random()*360);
+        this.keys.color = 'hsla('+ colorAngle +',100%,50%,1)';
+      },
+      randColor (){
+        this.r = Math.floor(Math.random()*360);
+        this.g = Math.floor(Math.random()*360);
+        this.b = Math.floor(Math.random()*360);
+        this.keys.color = 'rgba('+ this.r +','+ this.g +','+ this.b +',1)';
       },
       init(){
         
@@ -81,11 +97,29 @@
     margin-right: auto;
     margin-left: auto;
   }
-  .blackPage{
+  /*.blackPage{
     width: 100%;
     height: 100%;
     background: #000;
     opacity: 0.5;
+  }*/
+  .floatig font{
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 16px;
+    cursor:default;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+    not supported by any browser */
+    transition:all 2s;
+    -moz-transition:all 2s;
+    -webkit-transition:all 2s;
+    -o-transition:all 2s;
   }
   @media (max-width: 768px) {
     .body-content {

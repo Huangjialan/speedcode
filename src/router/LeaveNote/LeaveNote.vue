@@ -1,10 +1,8 @@
 <template>
-  <div class="container leaveNote border-r" @click="clickEvent">
+  <div id="leaveNote" class="container leaveNote-box border-r" @click="clickEvent">
     <div class="leave">
-      <!--<el-input type="textarea" :rows="5" resize="none" placeholder="请输入想您说的话..." v-model="content">-->
-      <!--</el-input>-->
       <!--DIV输入框-->
-      <div class="editor" v-html="content" @keyup="setContent($event)" contenteditable></div>
+      <div class="editor" v-html="msgcontent" @keyup="setContent($event)" contenteditable="true" v-if="showEdit"></div>
       <span class="pcl" v-show="pclShow">{{pcl}}</span>
       <div class="tools">
         <i @click="setB" class="iconfont">&#xe6fe;</i>
@@ -28,21 +26,20 @@
           <div class="fl content">
             <h4><a :href="vo.url" target="_blank">{{vo.name}}</a></h4>
             <p v-html="vo.content"></p>
-            <span>{{vo.time|timeReturn}}<a class="fr" @click="replyBtn(vo.id,vo.name)" href="#">回复</a></span>
-            <!--<i class="iconfont lou">&#xe6f1;{{vo.id}}</i>-->
-
+            <span>{{vo.time|timeReturn}}<a class="fr" @click="replyBtn(vo.id,vo.name)">回复</a></span>
             <div class="reply" v-for="zo in vo.list">
               <a :href="zo.url" target="_blank"><img src="static/img/head.jpg" /></a>
               <h4><a :href="zo.url" target="_blank">{{zo.name}}</a> 回复: <a :href="vo.url" target="_blank">{{vo.name}}</a></h4>
               <p v-html="zo.content"></p>
               <span>{{zo.time | timeReturn}}
-                <a class="fr" @click="pid=zo.id;pcl='回复'+(zo.name || '匿名')+':'" href="#">回复</a>
+                <a class="fr" @click="replyBtn(zo.id,zo.name)">回复</a>
               </span>
               <div class="reply" v-for="zzo in zo.list">
                 <a :href="zzo.url" target="_blank"><img src="static/img/head.jpg" /></a>
                 <h4><a :href="zzo.url" target="_blank">{{zzo.name}}</a> 回复: <a :href="zo.url" target="_blank">{{zo.name}}</a></h4>
                 <p v-html="zo.content"></p>
                 <span>{{zzo.time|timeReturn}} 
+                  <!--<a class="fr" @click="replyBtn(zzo.id,zzo.name)" href="#">回复</a>-->
                   <!--<i class="iconfont">&#xe61a;</i>{{zzo.region || "未知地点"}} {{zzo.os}} {{zzo.browser}}-->
                 </span>
               </div>
@@ -95,8 +92,8 @@
           url:'',
           qq:''
         },
-        article_id: 0,
-        content: "",
+        article_id: this.$route.query.id,
+        msgcontent: "",
         content2: "",
         pid: 0,
         pcl: "在这里输入您的留言吧",
@@ -104,16 +101,10 @@
         showFACE: false,
         qqbq: [],
         messageList: [],
-        user: {
-          name: "",
-          qq: "",
-          url: "",
-          email: "",
-          show: false,
-          pid: ""
-        },
         currentPage: 1,
         dialogTableVisible: false,
+        showEdit:true,
+        text:1
       }
     },
     created() {
@@ -122,18 +113,20 @@
         this.qqbq.push(i);
       }
     },
+    watch: {
+      "$route"() {
+        // 获取当前路径
+        this.article_id = this.$route.query.id;
+        this.init();
+      }
+    },
     methods: {
       init () {
+        this.form = JSON.parse(localStorage.getItem('userInfo')) || this.form;
         this.$axios.get(`http://47.104.73.125:81/api/leave/comment.html?p=${this.currentPage}&article_id=${this.article_id}`).then((res)=>{
           this.page.count = res.data.count;
           this.messageList = res.data.list;
         });
-      },
-      clickEvent (e) {
-        var target  = e.target.className;
-        if(target !== 'qqbq' && target !== 'iconfont'){
-          this.showFACE = false;
-        }　　
       },
       setContent: function($e) { //模拟双向绑定
         this.content2 = $e.target.innerHTML;
@@ -142,7 +135,12 @@
         } else {
           this.pclShow = false;
         }
-        console.log("pclShow ",this.pclShow);
+      },
+      clickEvent (e) {
+        var target  = e.target.className;
+        if(target !== 'qqbq' && target !== 'iconfont'){
+          this.showFACE = false;
+        }　　
       },
       handleSizeChange (val) {
         console.log(`每页 ${val} 条`);
@@ -156,7 +154,7 @@
         }).then(({
           value
         }) => {
-          this.content = this.content2 = this.content2 + "<b>" + value + "</b>";
+          this.msgcontent = this.content2 = this.content2 + "<b>" + value + "</b>";
         });
       },
       //连接
@@ -173,7 +171,7 @@
             this.$message.error('URL错误');
             return;
           }
-          this.content = this.content2 = this.content2 + '<a href="' + value + '">' + value + '</a>';
+          this.msgcontent = this.content2 = this.content2 + '<a href="' + value + '">' + value + '</a>';
         });
 
       },
@@ -183,7 +181,7 @@
       },
       //表情
       inpFACE: function(i) {
-        this.content = this.content2 = this.content2 + "<img src='./static/img/qqbq/" + i + ".gif'>";
+        this.msgcontent = this.content2 = this.content2 + "<img src='./static/img/qqbq/" + i + ".gif'>";
       },
       //引用
       setREFER: function() {
@@ -195,7 +193,7 @@
         }).then(({
           value
         }) => {
-          this.content = this.content2 = this.content2 + "<blockquote>" + value + "</blockquote>";
+          this.msgcontent = this.content2 = this.content2 + "<blockquote>" + value + "</blockquote>";
         });
       },
       //图片
@@ -212,7 +210,7 @@
             this.$message.error('URL错误');
             return;
           }
-          this.content = this.content2 = this.content2 + '<img src="' + value + '" />';
+          this.msgcontent = this.content2 = this.content2 + '<img src="' + value + '" />';
         });
       },
       //code
@@ -225,26 +223,46 @@
         }).then(({
           value
         }) => {
-          this.content = this.content2 = this.content2 + "<pre>" + value + "</pre>";
+          this.msgcontent = this.content2 = this.content2 + "<pre>" + value + "</pre>";
         });
       },
       //回复
       replyBtn (id,name){
         this.pid=id;
         this.pcl='回复'+(name || '匿名')+':';
+        this.pclShow = true;
+        this.clearInfo();
+        document.querySelector("#leaveNote").scrollIntoView(true);
+      },
+      clearInfo (){
+        //清除留言板内容
+        this.showEdit = false;
+        this.$nextTick(() => {
+          this.showEdit=true;          
+        });
+        this.msgcontent = this.content2 = " ";
       },
       //弹出用户信息框
       showInfo (){
         var self = this;
-        if(self.content2.length < 8) {
-          self.$message.error('留言内容不得少于8个字');
+        if(this.content2.length < 8) {
+          this.$message.error('留言内容不得少于8个字');
           return;
         }
         this.dialogTableVisible = true;
       },
+      //缺少http的url手动加上http
+      addHttps (url){
+        if (url.indexOf("http") === -1){
+          url = "http://"+url;
+        } 
+        return url;
+      },
       //提交信息
       postLeave (){
         var self = this;
+        this.form.url = this.addHttps(this.form.url);
+        localStorage.setItem('userInfo',JSON.stringify(this.form));
         let params = {
           content: this.content2,
           qq: this.form.qq,
@@ -256,18 +274,15 @@
         };
         this.$axios.post('http://47.104.73.125:81/api/leave/add.html',params).then((res)=>{
           if(res.data.code == 1) {
-            self.content = "";
-            self.content2 = "";
+            this.clearInfo();
             self.pid = 0;
             self.$message.success("留言成功");
             this.dialogTableVisible = false;
             self.init();
           } else {
             self.$message.error(e.data.msg);
+            this.dialogTableVisible = false;
           }
-        }).catch(err => {
-          self.$message.error(err);
-           console.log(err);
         });
 
       },
@@ -291,7 +306,7 @@
 </script>
 
 <style>
-  .leaveNote{
+  .leaveNote-box{
     padding: 20px 30px;
     background: #fff;
     margin-bottom:20px;

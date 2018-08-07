@@ -26,6 +26,7 @@
     </div>
     <div class="right-box">
       <personNote/>
+      <SearchByKey/>
       <HotArticle ref="hotArticle"/>
       <Category ref="category"/>
     </div>
@@ -36,6 +37,7 @@
   import personNote from '@/components/ui/personNote/personNote.vue';
   import HotArticle from '@/components/ui/HotArticle/HotArticle.vue';
   import Category from '@/components/ui/Category/Category.vue';
+  import SearchByKey from '@/components/ui/SearchByKey/SearchByKey.vue';
 
   export default {
     data () {
@@ -44,26 +46,28 @@
         totalCount: 1,
         currentPage:1,
         categoryId:this.$route.query.categoryId || '',
+        wordkey:this.$route.query.wordkey || '',
       }
     },
     components: {
       personNote,
       HotArticle,
       Category,
+      SearchByKey
     },
     mounted (){
       this.init();
     },
     watch: {
       "$route"() {
-        this.categoryId = this.$route.query.categoryId;
+        this.categoryId = this.$route.query.categoryId || '';
+        this.wordkey = this.$route.query.wordkey || '';
         this.init();
       },
     },
     methods: {
       init (){
-        console.log(this.categoryId);
-        this.$axios.get(`http://47.104.73.125:81/api/article?p=${this.currentPage}&t=${this.categoryId}`).then((res)=>{
+        this.$axios.get(`http://47.104.73.125:81/api/article?p=${this.currentPage}&t=${this.categoryId}&k=${this.wordkey}`).then((res)=>{
           if (!!res) {
             this.articleList = res.data.data;
             this.totalCount = res.data.count;
