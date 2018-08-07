@@ -1,16 +1,21 @@
 <template>
   <div id="app" @click="floating">
-    <NavBar/>
-    <div class="body-content">
-      <router-view/>
+    <div class="main-body">
+      <NavBar/>
+      <div class="body-content">
+        <router-view/>
+      </div>
+      <WebFooter/>
     </div>
-    <WebFooter/>
+    <div class="blackPage"></div>
+    <GotoTop/>
   </div>
 </template>
 
 <script>
   import NavBar from './components/ui/NavBar/NavBar.vue';
   import WebFooter from './components/ui/WebFooter/WebFooter.vue';
+  import GotoTop from './components/ui/GotoTop/GotoTop.vue';
   export default {
     name: 'App',
     data () {
@@ -31,6 +36,7 @@
     components: {
       NavBar,
       WebFooter,
+      GotoTop,
     },
     methods: {
       //点击特效
@@ -56,6 +62,9 @@
 
         self.keys.i = (self.keys.i==self.keys.list.length-1) ? 0 : ++self.keys.i;
       },
+      init(){
+        
+      }
     }
   }
 </script>
@@ -72,6 +81,21 @@
     margin-right: auto;
     margin-left: auto;
   }
+  .blackPage{
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.5;
+  }
+  @media (max-width: 768px) {
+    .body-content {
+      width: 100%;
+      padding:0;
+      .border-r{
+        border-radius: 0;
+      }
+    }
+  }
   @media (min-width: 768px) {
     .body-content {
         width: 750px;
@@ -84,12 +108,7 @@
   }
   @media (min-width: 1200px) {
     .body-content {
-        width: 1160px;
-    }
-  }
-  @media (min-width: 1400px) {
-    .body-content {
-        width: 1360px;
+        width: 1260px;
     }
   }
   

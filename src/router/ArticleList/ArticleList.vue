@@ -1,23 +1,32 @@
 <template>
   <div class="articleList-div">
-    <div class="articleList">
+    <div class="articleList border-r">
       <div v-for="(art,i) in articleList" class="articleBox">
         <h2><a class="title" v-text="art.title" @click="toDetail(art.id)"></a></h2>
-        <small>{{art.time}} by 刘曦 阅读1123次</small>
-        <div class="articleContent" v-html="art.body"></div>
+        <small>{{art.time}} by {{art.author.name}} 阅读{{art.view}}次</small>
+        <div class="articleContent" v-html="art.desc" v-highlight></div>
         <span class="readAll" @click="toDetail(art.id)">阅读全文...</span>
-        <p>标签：{{art.key}} | 评论(0)</p>
+        <p>标签：{{art.key}} | 评论({{art.comment}})</p>
       </div>
-      <div class="pagination-box">
+      <div class="pagination-box" v-show="!!articleList.length">
         <el-pagination
           background
           layout="prev, pager, next"
+          :current-page="currentPage"
+          @current-change="currentChange"
           :total="totalCount">
         </el-pagination>
       </div>
+      <el-alert
+        title="该类下暂时还没有添加文章"
+        type="info"
+        :closable="false"
+        show-icon v-show="!articleList.length">
+      </el-alert>
     </div>
     <div class="right-box">
       <personNote/>
+      <HotArticle ref="hotArticle"/>
       <Category ref="category"/>
     </div>
  </div>  
@@ -25,6 +34,7 @@
 
 <script>
   import personNote from '@/components/ui/personNote/personNote.vue';
+  import HotArticle from '@/components/ui/HotArticle/HotArticle.vue';
   import Category from '@/components/ui/Category/Category.vue';
 
   export default {
@@ -32,30 +42,44 @@
       return {
         articleList: [],
         totalCount: 1,
+        currentPage:1,
+        categoryId:this.$route.query.categoryId || '',
       }
     },
     components: {
       personNote,
+      HotArticle,
       Category,
     },
     mounted (){
       this.init();
     },
+    watch: {
+      "$route"() {
+        this.categoryId = this.$route.query.categoryId;
+        this.init();
+      },
+    },
     methods: {
       init (){
-        this.$axios.get('http://47.104.73.125:81/api/article').then((res)=>{
+        console.log(this.categoryId);
+        this.$axios.get(`http://47.104.73.125:81/api/article?p=${this.currentPage}&t=${this.categoryId}`).then((res)=>{
           if (!!res) {
             this.articleList = res.data.data;
             this.totalCount = res.data.count;
-            if (!sessionStorage.getItem('categoryList')){
-              sessionStorage.setItem('categoryList',JSON.stringify(res.data.hot));
-              this.$refs.category.init();
+            if (!sessionStorage.getItem('hotList')){
+              sessionStorage.setItem('hotList',JSON.stringify(res.data.hot));
+              this.$refs.hotArticle.init();
             }
           }
         });
       },
       toDetail (id) {
         this.$router.push({path:"/ArticleDetail",query:{id:id}});
+      },
+      currentChange (page){
+        this.currentPage = page;
+        this.init();
       }
     }
   }
@@ -70,15 +94,10 @@
       margin-right: 20px;
       background: #fff;
       margin-bottom:20px;
-      border-radius: 10px;
       .articleBox{
-        margin-bottom: 20px;
-        padding-bottom: 10px;
+        margin-bottom: 30px;
+        padding-bottom: 30px;
         border-bottom: 1px dashed #DCDFE6;
-      }
-      pre{
-        border: 1px solid sandybrown;
-        background: chocolate;
       }
       .title{
         font-size: 24px;
@@ -89,7 +108,7 @@
         margin-top: 10px;
       }
       .articleContent{
-        font-size: 16px;
+        font-size: 14px;
         padding-top: 10px;
         padding-bottom: 5px;
       }
@@ -101,6 +120,8 @@
         color: #34538b;
         font-weight: bold;
         cursor: pointer;
+        margin-bottom: 10px;
+        display: inline-block;
       }
       .title:hover,.readAll:hover{
         text-decoration: underline;

@@ -12,6 +12,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: ArticleList
+    },
+    {
+      path: '/ArticleList',
       name: 'ArticleList',
       component: ArticleList
     },

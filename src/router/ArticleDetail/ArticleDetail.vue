@@ -1,46 +1,60 @@
 <template>
   <div class="articleDetail-div">
     <div class="left-box">
-      <div class="articleDetail">
+      <div class="articleDetail border-r">
         <div>
-          <h2 class="title">了就是的空间是的</h2>
-          <small>2018年9月 by 刘曦 阅读1123次</small>
-          <div class="articleContent">阿少得可怜<br/>asdasdsad</div>
+          <h2 class="title" v-text="articleList.title"></h2>
+          <small>{{articleList.time}} by {{articleList.author.name}} 阅读{{articleList.view}}次</small>
+          <div class="articleContent" v-html="articleList.body" v-highlight></div>
         </div>
       </div>
-      <messageBoard/>  
+      <MessageBoard :articleId="id" />
     </div>    
     <div class="right-box">
       <personNote/>
+      <HotArticle/>
       <Category/>
     </div>
   </div>
 </template>
-
 <script>
-import personNote from '@/components/ui/personNote/personNote.vue';
-import Category from '@/components/ui/Category/Category.vue';
-import messageBoard from '@/components/ui/messageBoard/messageBoard.vue';
-
+  import hljs from 'highlight.js';
+  import personNote from '@/components/ui/personNote/personNote.vue';
+  import Category from '@/components/ui/Category/Category.vue';
+  import HotArticle from '@/components/ui/HotArticle/HotArticle.vue';
+  import MessageBoard from '@/components/ui/MessageBoard/MessageBoard.vue';
   export default {
+    data (){
+      return {
+        articleList: {
+          author:{},
+        },
+        id : this.$route.query.id
+      }
+    },
     components: {
       personNote,
       Category,
-      messageBoard
+      MessageBoard,
+      HotArticle
     },
     mounted () {
       this.init();
     },
+    watch: {
+      "$route"() {
+        this.id = this.$route.query.id;
+        this.init();
+      },
+    },
     methods: {
       init () {
-        let id = this.$route.query.id;
-        this.$axios.get('http://47.104.73.125:81/api/article/content?id='+id).then((res)=>{
+        this.$axios.get('http://47.104.73.125:81/api/article/content?id='+this.id).then((res)=>{
           if (!!res) {
-            this.articleList = res.data.data;
+            this.articleList = res.data;
           }
         });
-      }
-      
+      },
     }
   }
 </script>
@@ -48,16 +62,15 @@ import messageBoard from '@/components/ui/messageBoard/messageBoard.vue';
 <style lang="less">
   .articleDetail-div{
     display: flex;
-    align-items: flex-start;
     .left-box{
       flex: 1;
       margin-right: 20px;
+      overflow: hidden;
     }
     .articleDetail{
       padding: 20px 30px;
       background: #fff;
       margin-bottom:20px;
-      border-radius: 10px;
       .title{
         font-size: 24px;
       }
@@ -68,6 +81,11 @@ import messageBoard from '@/components/ui/messageBoard/messageBoard.vue';
         font-size: 16px;
         padding-top: 10px;
         padding-bottom: 20px;
+        pre,p,span{
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          word-break: break-word;
+        }
       }
       .pagination-box{
         text-align: center;
@@ -75,6 +93,7 @@ import messageBoard from '@/components/ui/messageBoard/messageBoard.vue';
     }
     .right-box{
       width: 300px;
+      overflow: hidden;
     }
   }
   @media (max-width: 1000px) {

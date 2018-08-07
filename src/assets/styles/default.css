@@ -10,7 +10,10 @@ body {
   font-family: "Microsoft YaHei","Arial",sans-serif!important;
   background-image: url(../img/leaf/bg_body.gif);
 }
-
+body.dialog-open {
+  position: fixed;
+  width: 100%;
+}
 textarea {
   font-family: "Microsoft YaHei","Arial",sans-serif;
   font-size: 12px;
@@ -34,7 +37,7 @@ table {
 }
 
 * {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  /*-webkit-tap-highlight-color: rgba(0, 0, 0, 0);*/
   box-sizing: border-box;
 }
 
@@ -44,4 +47,19 @@ table {
 
 .fr{
   float: right;
+}
+.border-r{
+  border-radius: 10px;
+}
+
+.shadePage{
+  width: 100%;
+  background: #ddd;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  opacity: 0.7;
+  z-index: 99;
 }

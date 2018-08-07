@@ -1,8 +1,8 @@
 <template>
-  <div class="articleCate">
+  <div class="articleCate border-r">
     <div class="cateTitle">文章分类</div>
     <ul>
-      <li v-for="list in categoryList"><a @click="gotoCategory(list.id)">{{list.title}}</a></li>
+      <li v-for="list in categoryList" v-show="list.id>0"><a @click="gotoCategory(list.id)">{{list.name}}({{list.count}})</a></li>
     </ul>
   </div>
 </template>
@@ -19,15 +19,13 @@
     },
     methods: {
       init (){
-        this.categoryList = JSON.parse(sessionStorage.getItem('categoryList'));
-        console.log('sucess',this.categoryList);
-      },
-      toDetail (id) {
-        this.$router.push({path:"/ArticleDetail",query:{id:id}});
+//      this.categoryList = JSON.parse(sessionStorage.getItem('categoryList'));
+        this.$axios.get('http://47.104.73.125:81/api/article/category').then((res)=>{
+          this.categoryList = res.data;
+        })
       },
       gotoCategory (id) {
-        alert(id);
-        this.$router.push({path:"/",query:{id:id}});
+        this.$router.push({path:"/ArticleList",query:{categoryId:id}});
       }
     }
   }
@@ -39,7 +37,6 @@
       padding: 20px 30px;
       background: #fff;
       margin-bottom:20px;
-      border-radius: 10px;
       .cateTitle{
         font-size: 16px;
         font-weight: bold;
@@ -49,6 +46,7 @@
         font-size: 14px;
         line-height: 26px;
         a{
+          cursor: pointer;
           text-decoration: underline;
         }
       }

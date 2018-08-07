@@ -1,5 +1,5 @@
 <template>
-  <div class="aboutme">
+  <div class="aboutme border-r">
       <h2 class="ab_title">关于我</h2>
       <div class="avatar"><img src="../../../assets/photo.png"></div>
       <div class="ab_con">
@@ -17,7 +17,6 @@
 <style lang="less">
   .aboutme {
     background: #FFF;
-    border-radius: 10px;
     margin-bottom: 20px;
     overflow: hidden;
     .ab_title{

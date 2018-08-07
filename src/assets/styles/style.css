@@ -247,6 +247,7 @@
 	margin-bottom: 20px;
 	-webkit-box-shadow: 0px 0px 15px #ccc;
 	box-shadow: 0px 0px 15px #ccc;
+	display: flex;
 }
 
 .leave-content>ul li .img {
@@ -277,7 +278,7 @@
 .leave-content>ul li .content {
 	padding: 10px;
 	border-left: solid 1px #CCCCCC;
-	width: 800px;
+	width: 90%;
 	position: relative;
   min-height: 105px;
 }
