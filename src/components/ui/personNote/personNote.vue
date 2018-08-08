@@ -1,7 +1,7 @@
 <template>
   <div class="aboutme border-r">
       <h2 class="ab_title">关于我</h2>
-      <div class="avatar"><img src="../../../assets/photo.png"></div>
+      <div class="avatar"><img src="../../../assets/img/photo.png"></div>
       <div class="ab_con">
         <p>网名：皇家蓝 | 伊笑倾城 | 黑羽</p>
         <p>职业：Web前端工程师、网页设计</p>

@@ -7,11 +7,10 @@
       </div>
       <WebFooter/>
     </div>
-    <div class="blackPage"></div>
     <GotoTop/>
     <!--点击特效-->
     <div class="floatig">
-      <font v-for="vo in keys.list" v-show="vo.show" :style="{top:vo.yy+'px',left:vo.xx+'px',opacity:vo.opacity,color:keys.color}">{{vo.name}}</font>
+      <font v-for="(vo,index) in keys.list" :key="index" v-show="vo.show" :style="{top:vo.yy+'px',left:vo.xx+'px',opacity:vo.opacity,color:keys.color}">{{vo.name}}</font>
     </div>
   </div>
 </template>
@@ -46,8 +45,10 @@
     methods: {
       //点击特效
       floating (e){
+        console.log(e.target.className);
         //排除某些元素
-        if(e.target.nodeName=="A" || e.target.nodeName=="I"){
+//      if(e.target.nodeName=="A" || e.target.nodeName=="I"){
+        if(e.target.className != "main-body"){
           return false;
         }
         var self = this;

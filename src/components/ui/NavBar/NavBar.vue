@@ -11,7 +11,7 @@
           {{nav.name}}
         </li>
       </ul>
-      <img class="navbar-icon" src="../../../../build/logo.png" @click="showMenu">
+      <img class="navbar-icon" src="../../../assets/img/logo.png" @click="showMenu">
       <transition name="el-zoom-in-top">
         <div class="navbar-phone" v-show="phoneMenu">
           <ul>

@@ -4,11 +4,9 @@ body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, fo
 }
 
 body {
-  background: #fff;
   color: #333;
   font-size: 12px;
   font-family: "Microsoft YaHei","Arial",sans-serif!important;
-  background-image: url(../img/leaf/bg_body.gif);
 }
 body.dialog-open {
   position: fixed;
